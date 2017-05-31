@@ -7,7 +7,7 @@ class interfaces:
     WINDOWS_IF_COMMAND = "ipconfig /all"
 
     def __init__(self):
-        self.ipAddresses = []
+        self.adapters = []
         self._load()
     # End __init__
 
@@ -35,14 +35,30 @@ class interfaces:
             lines = output.split("\n")
 
             currentAdapter = None
+            blankLines = 0
             for line in lines:
-                if currentAdapter is not None:
-                    pass
-                else:
-                    if line.startswith("Ethernet adapter"):
-                        currentAdapter = adapter(line.rstrip("Ethernet adapter ").lstrip(":"))
+                if line.startswith("Ethernet adapter"):
+                    currentAdapter = adapter(line.lstrip("Ethernet adapter ").rstrip(":"))
+                elif currentAdapter is not None:
+                    if line is not None:
+                        split = line.split(":")
+                        if len(split) == 2:
+                            if split[0].strip().startswith("Physical"):
+                                currentAdapter.MAC_address = split[1].strip()
+                            elif split[0].strip().startswith("IPv4"):
+                                currentAdapter.ip_address = split[1].strip()
+                        else:
+                            blankLines += 1
+                if blankLines == 2:
+                    blankLines = 1
+                    self.adapters.append(currentAdapter)
+                    currentAdapter = None
+
     # End _parse_windows_if_command
 
+    def print(self):
+        for adp in self.adapters:
+            adp.print()
 
 # End interfaces
 
@@ -50,7 +66,15 @@ class adapter:
 
     def __init__(self, name):
         self.name = name
+        self.MAC_address = None
+        self.ip_address = None
     # End __init__
+
+    def print(self):
+        print(self.name)
+        print("MAC -> {0}".format(self.MAC_address))
+        print("IPv4 Address -> {0}".format(self.ip_address))
 # End adapter
 
 i = interfaces() 
+i.print()
