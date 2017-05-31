@@ -53,8 +53,42 @@ class interfaces:
                     blankLines = 1
                     self.adapters.append(currentAdapter)
                     currentAdapter = None
-
     # End _parse_windows_if_command
+
+    def _parse_linux_if_command(self, output):
+        if output is not None:
+            lines = output.split("\n")
+
+            currentAdapter = None
+            for line in lines:
+                split = line.split(" ")
+                if currentAdapter is None and len(split) > 2:
+                    currentAdapter = adapter(split[0].strip())
+                    currentAdapter.MAC_address = split[4].strip()
+                elif currentAdapter is not None and split[0] == "inet":
+                    currentAdapter.ip_address = split[1].split(":")[1].strip()
+                elif currentAdapter is not None and len(split) < 2:
+                    self.adapters.append(currentAdapter)
+                    currentAdapter = None
+
+    # End _parse_linux_if_command
+
+    def get_adapter_by_ipAddress_mask(self, mask):
+        ret = None
+        if mask is not None:
+            mask = mask.replace('X', 'x')
+            try:
+                temp = mask[:mask.index('x')]
+                mask = temp
+            except:
+                pass
+            
+            for adp in self.adapters:
+                if adp.ip_address.startswith(mask):
+                    ret = adp
+                    break
+        return ret
+    # End get_adapter_by_ipAddress_mask
 
     def print(self):
         for adp in self.adapters:
@@ -75,6 +109,3 @@ class adapter:
         print("MAC -> {0}".format(self.MAC_address))
         print("IPv4 Address -> {0}".format(self.ip_address))
 # End adapter
-
-i = interfaces() 
-i.print()

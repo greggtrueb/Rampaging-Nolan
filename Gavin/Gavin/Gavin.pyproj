@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d3b4d4bf-fe07-4d07-8591-2d9460ebf9c1</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>ipAddress.py</StartupFile>
+    <StartupFile>ifInfo.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,7 +26,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gavin.py" />
-    <Compile Include="ipAddress.py">
+    <Compile Include="ifInfo.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="__init__.py">
