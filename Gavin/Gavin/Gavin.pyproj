@@ -5,13 +5,17 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d3b4d4bf-fe07-4d07-8591-2d9460ebf9c1</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>ifInfo.py</StartupFile>
+    <StartupFile>execRunner_tester.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Gavin</Name>
     <RootNamespace>Gavin</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>
+    </CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +27,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="execRunner.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="execRunner_tester.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gavin.py" />

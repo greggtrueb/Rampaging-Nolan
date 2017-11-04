@@ -15,6 +15,8 @@ class execRun:
         if execRun is not None:
             ret = Thread(target = execRun.runCommand)
             ret.start()
+
+        return ret
     # End run
 
     def __init__(self, cmd, args = None, state = {}):
@@ -23,34 +25,49 @@ class execRun:
         self._state = state
         self._cmd = cmd
         self._retCode = None
+        self._process = None
+        self._encoding = execRun.NO_ENCODING
     # End __init__
 
-    def _getCmd(self):
-        return self._cmd
-
-    def runCommand(self, encoding = None, args = {}):
-        cmd = self._getCmd()
-
-        enc = encoding
-        if enc is None:
+    def _set_encoding(self, encoding = None, args = {}):
+        self._encoding = encoding
+        if self._encoding is None:
             try:
-                enc = args[execRun.ENCODING_KEY]
+                self._encoding = args[execRun.ENCODING_KEY]
             except:
-                enc = execRun.DEFAULT_ENCODING
+                self._encoding = execRun.DEFAULT_ENCODING
 
-        if enc == execRun.NO_ENCODING:
-            enc = None
+        if self._encoding == execRun.NO_ENCODING:
+            self._encoding = None
+    # End _set_encoding
 
-        process = subprocess.Popen(cmd, stdout = subprocess.PIPE)
+    def _start_process(self):
+        if self._cmd is None:
+            raise Exception("No command spcified in exec runner")
+
+        self._process = subprocess.Popen(self._cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+
+        if self._process is None:
+            raise Exception("Could not start process {0}".format(self._cmd))
+
+        return self._process
+    # End _start_process
+
+    def runCommand(self, encoding = None, read_size = 256, args = {}):
+        self._set_encoding(encoding = encoding, args = args)
+
+        self._start_process()
+
         terminate = False
         while self._retCode is None:
-            self._retCode = process.poll()
+            self._retCode = self._process.poll()
+            
+            nextChunk = self._process.stdout.read(read_size)
+            if nextChunk is not None:
+                if self._encoding is not None:
+                    nextChunk = nextChunk.decode(self._encoding)
+                self._output += nextChunk
 
-            nextline = process.stdout.readline()
-            if nextline is not None:
-                if enc is not None:
-                    nextline = nextline.decode(enc)
-                self._output += nextline
     # End run
 
     def get_output(self):
