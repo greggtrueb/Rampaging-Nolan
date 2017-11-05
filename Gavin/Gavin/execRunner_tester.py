@@ -35,7 +35,7 @@ def run_consumer():
             sys.stdout.write(output)
             sys.stdout.flush()
             output = None
-        time.sleep(15)
+        time.sleep(5)
 
     e1Out = e1.get_next_output()
     e2Out = e2.get_next_output()
@@ -64,7 +64,7 @@ def run_producer(arg):
     
     terminate = 20
     while terminate > 0:
-        os.system("echo " + out + ": Thread {0} : time {1}".format(threading.get_ident(), time.time()))
+        os.system("echo " + out + " : %systemroot% : Thread {0} : time {1}".format(threading.get_ident(), time.time()))
         terminate = terminate - 1
         
         time.sleep(random.randint(1,20))

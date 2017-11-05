@@ -8,6 +8,7 @@ class execRun:
     ENCODING_KEY = 'encoding'
     DEFAULT_ENCODING = 'UTF-8'
     NO_ENCODING = 'NONE'
+    SHELL_ARGUMENT = 'SHELL'
 
     @staticmethod
     def runAsync(execRun):
@@ -45,7 +46,14 @@ class execRun:
         if self._cmd is None:
             raise Exception("No command spcified in exec runner")
 
-        self._process = subprocess.Popen(self._cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+        shell = False
+        try:
+            if self._state[SHELL_ARGUMENT]:
+                shell = True
+        except:
+            shell = False
+
+        self._process = subprocess.Popen(self._cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, shell = shell)
 
         if self._process is None:
             raise Exception("Could not start process {0}".format(self._cmd))
@@ -86,10 +94,16 @@ class execRun:
         return self._retCode
     # End get_ret_code
 
+    def get_pid(self):
+        if self._process is not None:
+            return self._process.pid
+        return None
+    # End get_pid
+
     def has_exited(self):
         return self.get_ret_code() is not None
     # End has_exited
 
-# End execRunner
+# End execRun
 
  
